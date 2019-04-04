@@ -19,7 +19,8 @@
 
   const userNav = $('#user-links');
   if (!userNav) return;
-
+  // ul.header-search-wrapper
+  // li.jump-to-suggestions-path
   GM_addStyle(`
     .prjsMenu { position: relative; }
     .prjsMenu:hover div.prjsWrap { display: block; }
@@ -91,6 +92,7 @@
   function setProjectList(projects) {
     const prjsWrap = document.createElement('div');
     addClass(prjsWrap, 'prjsWrap');
+    addClass(prjsWrap, 'Box');
     const prjs = document.createElement('ul');
     addClass(prjs, 'prjs');
 
