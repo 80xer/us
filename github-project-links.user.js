@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Github project links
-// @version     1.0.1
+// @version     1.0.2
 // @description A userscript that adds a menu that shows a list of all the project links in the main menu.
 // @author      80xer
 // @namespace   https://github.com/80xer
@@ -31,7 +31,8 @@
     ul.prjs { position:relative; list-style: none; width: auto; }
     .tmpafter {  content: ''; }
     ul.prjs:after { position: absolute; left: 35px; top: -14px; content: ''; display: inline-block; margin-left: -9px; }
-    ul.prjs li a { display: flex; padding: 10px 12px; text-decoration: none;}
+    ul.prjs li a { display: flex; flex-direction: column; padding: 10px 12px; text-decoration: none;}
+    .jump-to-suggestions-path .pr-5 { padding-right: 0px !important; }
   `);
 
   function $(str, el) {
@@ -67,22 +68,24 @@
 
   // open projects
   const openState = $('.table-list-header-toggle.states > a:first-child');
-  const projects = $$('#projects-results h4 a');
+  const projects = $$('#projects-results > div');
 
   // set list in storage
   if (hasClass(openState, 'selected') && projects.length > 0) {
-    GM_log('found open projects');
-
     const projectArray = projects.map(project => {
-      GM_log(project);
+      const info = project.children[1];
+      const anchor = $('h4 a', info);
+      let bar;
+      if (info.children.length >= 3) {
+        bar = info.children[2].cloneNode(true).outerHTML;
+      }
       return {
-        href: project.getAttribute('href'),
-        name: project.textContent,
+        href: anchor.getAttribute('href'),
+        name: anchor.textContent,
+        bar: bar,
       };
     });
     GM_setValue('prjList', projectArray);
-  } else {
-    GM_log('not found open projects');
   }
 
   function setProjectList(projects) {
@@ -101,7 +104,14 @@
       const anchor = document.createElement('a');
       addClass(anchor, 'jump-to-suggestions-path');
       anchor.setAttribute('href', project.href);
-      anchor.textContent = project.name;
+      const name = document.createElement('div');
+      name.textContent = project.name;
+      anchor.appendChild(name);
+      if (project.bar) {
+        const bar = document.createElement(null);
+        anchor.appendChild(bar);
+        bar.outerHTML = project.bar;
+      }
       prj.appendChild(anchor);
       prj.onmouseenter = function(e) {
         e.target.setAttribute('aria-selected', true);
