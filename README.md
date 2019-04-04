@@ -12,4 +12,6 @@
   - UC Browser - install [Tampermonkey](https://tampermonkey.net/?ext=dhdg&browser=ucweb).
 
 - install script:
-  - Github projects links
+  - [Github project links][gpl-raw]
+
+[gpl-raw]: https://raw.githubusercontent.com/80xer/us/master/github-project-links.user.js
