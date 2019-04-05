@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Github project links
-// @version     1.3
+// @version     1.2.1
 // @description A userscript that adds a menu that shows a list of all the project links in the main menu.
 // @author      80xer
 // @namespace   https://github.com/80xer
@@ -23,6 +23,8 @@
     return;
   }
   const darkStyle = $('.ghd-style');
+  const hamburg = $('.Header-item.d-lg-none').style.display;
+  GM_log('h', hamburg);
 
   GM_addStyle(`
     @media (max-width: 1011px) {
@@ -32,10 +34,11 @@
       .prjsMenu ul.prjs:after { left: -5px; top: 13px; border-bottom-color: transparent; border-right-color: #fff;}
       .prjsMenu ul.prjs.dark:before { left: -7px; top: 12px; border-bottom-color: transparent; border-right-color: #343434; }
       .prjsMenu ul.prjs.dark:after { left: -5px; top: 13px; border-bottom-color: transparent; border-right-color: #181818;}
+      a.prjsLink { z-index: 31; }
     }
 
     @media (min-width: 1012px) {
-      a.prjsLink { z-index: 31; }
+      a.prjsLink { z-index: 33; }
     }
 
     .prjsMenu { position: relative; }
