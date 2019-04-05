@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Github project links
-// @version     1.1
+// @version     1.1.1
 // @description A userscript that adds a menu that shows a list of all the project links in the main menu.
 // @author      80xer
 // @namespace   https://github.com/80xer
