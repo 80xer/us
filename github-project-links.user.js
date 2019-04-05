@@ -26,8 +26,8 @@
   GM_addStyle(`
     .prjsMenu { position: relative; }
     .prjsMenu:hover div.prjsWrap { display: block; }
-    a.prjsLink { position: absolute; z-index: 3; }
-    div.prjsWrap { position: absolute; width: 280px; z-index: 2; top: 20px; left: -10px; padding: 10px; display: none; }
+    a.prjsLink { position: absolute; z-index: 33; }
+    div.prjsWrap { position: absolute; width: 280px; z-index: 32; top: 20px; left: -10px; padding: 10px; display: none; }
     .tmpbefore { border-bottom-color: #343434; border: 8px solid transparent; }
     ul.prjs:before { position: absolute; left: 34px; top: -16px; content: ''; display: inline-block; }
     ul.prjs { position:relative; list-style: none; width: auto; }
