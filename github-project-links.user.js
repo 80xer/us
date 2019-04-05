@@ -23,8 +23,6 @@
     return;
   }
   const darkStyle = $('.ghd-style');
-  const hamburg = $('.Header-item.d-lg-none').style.display;
-  GM_log('h', hamburg);
 
   GM_addStyle(`
     @media (max-width: 1011px) {
