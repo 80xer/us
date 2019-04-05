@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Github project links
-// @version     1.2
+// @version     1.3
 // @description A userscript that adds a menu that shows a list of all the project links in the main menu.
 // @author      80xer
 // @namespace   https://github.com/80xer
@@ -22,11 +22,25 @@
     GM_log('not found user avatar');
     return;
   }
+  const darkStyle = $('.ghd-style');
 
   GM_addStyle(`
+    @media (max-width: 1011px) {
+      .prjsMenu { height: 38px; width: 100%; }
+      .prjsMenu .prjsWrap { top: -10px; left: 70px; }
+      .prjsMenu ul.prjs:before { left: -7px; top: 12px; border-bottom-color: transparent; border-right-color: rgba(27,31,35,.15); }
+      .prjsMenu ul.prjs:after { left: -5px; top: 13px; border-bottom-color: transparent; border-right-color: #fff;}
+      .prjsMenu ul.prjs.dark:before { left: -7px; top: 12px; border-bottom-color: transparent; border-right-color: #343434; }
+      .prjsMenu ul.prjs.dark:after { left: -5px; top: 13px; border-bottom-color: transparent; border-right-color: #181818;}
+    }
+
+    @media (min-width: 1012px) {
+      a.prjsLink { z-index: 31; }
+    }
+
     .prjsMenu { position: relative; }
     .prjsMenu:hover div.prjsWrap { display: block; }
-    a.prjsLink { position: absolute; z-index: 33; }
+    a.prjsLink { position: absolute; width: 100%; }
     div.prjsWrap { position: absolute; width: 280px; z-index: 32; top: 20px; left: -10px; padding: 10px; display: none; }
     .tmpbefore { border-bottom-color: #343434; border: 8px solid transparent; }
     ul.prjs:before { position: absolute; left: 34px; top: -16px; content: ''; display: inline-block; }
@@ -75,7 +89,11 @@
       prjsLink.setAttribute('href', '/orgs/lawcompany/projects');
       addClass(prjsLink, 'prjsLink');
       menu.appendChild(prjsLink);
-      explore.parentNode.appendChild(menu);
+      if (explore.nextSibling) {
+        explore.parentNode.insertBefore(menu, explore.nextSibling);
+      } else {
+        explore.parentNode.appendChild(menu);
+      }
       resolve(menu);
     });
   }
@@ -118,6 +136,7 @@
       addClass(prjs, 'Popover-message');
       addClass(prjs, 'jump-to-suggestions');
       addClass(prjs, 'jump-to-suggestions-results-container');
+      if (darkStyle) addClass(prjs, 'dark');
 
       projects.forEach(project => {
         const prj = document.createElement('li');
