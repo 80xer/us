@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Github project links
-// @version     1.3.3
+// @version     1.3.4
 // @description A userscript that adds a menu that shows a list of all the project links in the main menu.
 // @author      80xer
 // @namespace   https://github.com/80xer
@@ -43,7 +43,7 @@
     .prjsMenu { position: relative; }
     .prjsMenu:hover div.prjsWrap, .prjsMenu:hover div.reposWrap { display: block; }
     .prjsLink { display: block; width: 100%; }
-    .prjsWrap, .reposWrap { position: absolute; width: 280px; z-index: 32; top: 20px; left: -10px; padding: 10px; display: none; }
+    .prjsWrap, .reposWrap { position: absolute; width: 280px; z-index: 32; top: 35px; left: -10px; padding: 10px; display: none; }
     .tmpbefore { border-bottom-color: #343434; border: 8px solid transparent; }
     ul.lcul:before { position: absolute; left: 34px; top: -16px; content: ''; display: inline-block; }
     ul.lcul { position:relative; list-style: none; width: auto; }
