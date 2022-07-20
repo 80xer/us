@@ -15,15 +15,15 @@
 // @downloadURL https://raw.githubusercontent.com/80xer/us/master/github-project-links.user.js
 // ==/UserScript==
 
-(function() {
-  'use strict';
-  const user = $('.Header-item .avatar');
+(function () {
+  "use strict";
+  const user = $(".Header-item .avatar");
   if (!user) {
-    GM_log('not found user avatar');
+    GM_log("not found user avatar");
     return;
   }
-  const darkStyle = $('.ghd-style');
-  const menus = $$('nav a');
+  const darkStyle = $(".ghd-style");
+  const menus = $$("nav a");
 
   GM_addStyle(`
     @media (max-width: 1011px) {
@@ -68,13 +68,13 @@
     if (!el) return false;
     if (el.classList) return el.classList.contains(className);
     else
-      return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
+      return new RegExp("(^| )" + className + "( |$)", "gi").test(el.className);
   }
 
   function addClass(el, className) {
     if (!el) return;
     if (el.classList) el.classList.add(className);
-    else el.className += ' ' + className;
+    else el.className += " " + className;
   }
 
   function createMenu(beforeMenu, fn) {
@@ -101,26 +101,26 @@
 
   function getProjectListToStorage() {
     // open projects
-    const openState = $('.table-list-header-toggle.states > a:first-child');
-    const projects = $$('#projects-results > div');
+    const openState = $(".table-list-header-toggle.states > a:first-child");
+    const projects = $$("#projects-results > div");
     // set list in storage
-    if (hasClass(openState, 'selected') && projects.length > 0) {
-      const projectArray = projects.map(project => {
+    if (hasClass(openState, "selected") && projects.length > 0) {
+      const projectArray = projects.map((project) => {
         const info = project.children[1];
-        const anchor = $('h4 a', info);
+        const anchor = $("h4 a", info);
         let bar;
         if (info.children.length >= 3) {
           bar = info.children[2].cloneNode(true).outerHTML;
         }
         return {
-          href: anchor.getAttribute('href'),
+          href: anchor.getAttribute("href"),
           name: anchor.textContent,
           bar: bar,
         };
       });
-      GM_setValue('prjList', projectArray);
+      GM_setValue("prjList", projectArray);
     }
-    return GM_getValue('prjList');
+    return GM_getValue("prjList");
   }
 
   function createProjectList(menu, projects) {
@@ -128,23 +128,23 @@
       return;
     }
 
-    const prjsWrap = document.createElement('div');
-    addClass(prjsWrap, 'prjsWrap');
-    const prjs = document.createElement('ul');
-    addClass(prjs, 'lcul');
-    addClass(prjs, 'Box');
-    addClass(prjs, 'Popover-message');
-    addClass(prjs, 'jump-to-suggestions');
-    addClass(prjs, 'jump-to-suggestions-results-container');
-    if (darkStyle) addClass(prjs, 'dark');
+    const prjsWrap = document.createElement("div");
+    addClass(prjsWrap, "prjsWrap");
+    const prjs = document.createElement("ul");
+    addClass(prjs, "lcul");
+    addClass(prjs, "Box");
+    addClass(prjs, "Popover-message");
+    addClass(prjs, "jump-to-suggestions");
+    addClass(prjs, "jump-to-suggestions-results-container");
+    if (darkStyle) addClass(prjs, "dark");
 
-    projects.forEach(project => {
-      const prj = document.createElement('li');
-      addClass(prj, 'navigation-item');
-      const anchor = document.createElement('a');
-      addClass(anchor, 'jump-to-suggestions-path');
-      anchor.setAttribute('href', project.href);
-      const name = document.createElement('div');
+    projects.forEach((project) => {
+      const prj = document.createElement("li");
+      addClass(prj, "navigation-item");
+      const anchor = document.createElement("a");
+      addClass(anchor, "jump-to-suggestions-path");
+      anchor.setAttribute("href", project.href);
+      const name = document.createElement("div");
       name.textContent = project.name;
       anchor.appendChild(name);
       if (project.bar) {
@@ -153,11 +153,11 @@
         bar.outerHTML = project.bar;
       }
       prj.appendChild(anchor);
-      prj.onmouseenter = function(e) {
-        e.target.setAttribute('aria-selected', true);
+      prj.onmouseenter = function (e) {
+        e.target.setAttribute("aria-selected", true);
       };
-      prj.onmouseleave = function(e) {
-        e.target.setAttribute('aria-selected', false);
+      prj.onmouseleave = function (e) {
+        e.target.setAttribute("aria-selected", false);
       };
       prjs.appendChild(prj);
     });
@@ -166,67 +166,67 @@
     menu.appendChild(prjsWrap);
   }
 
-  const parentProjectMenu = (text, url) => menu => {
-    const parentMenu = document.createElement('div');
-    addClass(parentMenu, 'prjsMenu');
-    addClass(menu, 'prjsLink');
+  const parentProjectMenu = (text, url) => (menu) => {
+    const parentMenu = document.createElement("div");
+    addClass(parentMenu, "prjsMenu");
+    addClass(menu, "prjsLink");
     menu.textContent = text;
-    menu.setAttribute('href', url);
+    menu.setAttribute("href", url);
     parentMenu.appendChild(menu);
     return parentMenu;
   };
 
-  const parentRepositoryMenu = (text, url) => menu => {
-    const link = $('a', menu);
+  const parentRepositoryMenu = (text, url) => (menu) => {
+    const link = $("a", menu);
     link.textContent = text;
-    link.setAttribute('href', url);
+    link.setAttribute("href", url);
     return menu;
   };
 
-  const beforeMenu = menus.filter(e => e.textContent.trim() === 'Explore')[0];
+  const beforeMenu = menus.filter((e) => e.textContent.trim() === "Explore")[0];
 
   const projectMenu = createMenu(
     beforeMenu,
-    parentProjectMenu('Projects', '/orgs/lawcompany/projects')
+    parentProjectMenu("Projects", "/orgs/lawcompany/projects")
   );
 
   const repositoryMenu = createMenu(
     projectMenu,
-    parentRepositoryMenu('Repositories', '/lawcompany')
+    parentRepositoryMenu("Repositories", "/orgs/lawcompany/repositories")
   );
 
   function setCheckRepository(repoList) {
-    const repos = $$('#org-repositories .org-repos.repo-list ul li');
+    const repos = $$("#org-repositories .org-repos.repo-list ul li");
     if (!repos || repos.length <= 0) return;
-    repos.forEach(repo => {
-      const h3 = $('h3', repo);
-      const anchor = $('a', h3);
-      h3.style.position = 'relative';
-      const ch = document.createElement('input');
-      ch.setAttribute('type', 'checkbox');
-      ch.setAttribute('data-text', anchor.textContent.trim());
-      ch.setAttribute('data-url', anchor.getAttribute('href'));
+    repos.forEach((repo) => {
+      const h3 = $("h3", repo);
+      const anchor = $("a", h3);
+      h3.style.position = "relative";
+      const ch = document.createElement("input");
+      ch.setAttribute("type", "checkbox");
+      ch.setAttribute("data-text", anchor.textContent.trim());
+      ch.setAttribute("data-url", anchor.getAttribute("href"));
       const checkedRepo = repoList.filter(
-        repo => anchor.textContent.trim() === repo.text
+        (repo) => anchor.textContent.trim() === repo.text
       );
-      if (checkedRepo.length > 0) ch.setAttribute('checked', true);
-      addClass(ch, 'chckRepo');
+      if (checkedRepo.length > 0) ch.setAttribute("checked", true);
+      addClass(ch, "chckRepo");
       h3.appendChild(ch);
       ch.addEventListener(
-        'change',
-        e => {
-          let repoList = GM_getValue('repoList', []);
+        "change",
+        (e) => {
+          let repoList = GM_getValue("repoList", []);
           if (e.target.checked) {
             repoList.push({
-              text: e.target.getAttribute('data-text'),
-              url: e.target.getAttribute('data-url'),
+              text: e.target.getAttribute("data-text"),
+              url: e.target.getAttribute("data-url"),
             });
           } else {
             repoList = repoList.filter(
-              repo => repo.text !== e.target.getAttribute('data-text')
+              (repo) => repo.text !== e.target.getAttribute("data-text")
             );
           }
-          GM_setValue('repoList', repoList);
+          GM_setValue("repoList", repoList);
           createRepositoryList(repositoryMenu, repoList);
         },
         false
@@ -239,48 +239,48 @@
       return;
     }
 
-    const reposWrap = document.createElement('div');
-    addClass(reposWrap, 'reposWrap');
-    const rps = document.createElement('ul');
-    addClass(rps, 'lcul');
-    addClass(rps, 'Box');
-    addClass(rps, 'Popover-message');
-    addClass(rps, 'jump-to-suggestions');
-    addClass(rps, 'jump-to-suggestions-results-container');
-    if (darkStyle) addClass(rps, 'dark');
+    const reposWrap = document.createElement("div");
+    addClass(reposWrap, "reposWrap");
+    const rps = document.createElement("ul");
+    addClass(rps, "lcul");
+    addClass(rps, "Box");
+    addClass(rps, "Popover-message");
+    addClass(rps, "jump-to-suggestions");
+    addClass(rps, "jump-to-suggestions-results-container");
+    if (darkStyle) addClass(rps, "dark");
 
     repos.sort((a, b) => {
       if (a.text < b.text) return -1;
       return 1;
     });
 
-    repos.forEach(repo => {
-      const rp = document.createElement('li');
-      addClass(rp, 'navigation-item');
-      const anchor = document.createElement('a');
-      addClass(anchor, 'jump-to-suggestions-path');
-      anchor.setAttribute('href', repo.url);
-      const name = document.createElement('div');
+    repos.forEach((repo) => {
+      const rp = document.createElement("li");
+      addClass(rp, "navigation-item");
+      const anchor = document.createElement("a");
+      addClass(anchor, "jump-to-suggestions-path");
+      anchor.setAttribute("href", repo.url);
+      const name = document.createElement("div");
       name.textContent = repo.text;
       anchor.appendChild(name);
       rp.appendChild(anchor);
-      rp.onmouseenter = function(e) {
-        e.target.setAttribute('aria-selected', true);
+      rp.onmouseenter = function (e) {
+        e.target.setAttribute("aria-selected", true);
       };
-      rp.onmouseleave = function(e) {
-        e.target.setAttribute('aria-selected', false);
+      rp.onmouseleave = function (e) {
+        e.target.setAttribute("aria-selected", false);
       };
       rps.appendChild(rp);
     });
 
     reposWrap.appendChild(rps);
-    if ($('.reposWrap', menu)) {
-      menu.removeChild($('.reposWrap'));
+    if ($(".reposWrap", menu)) {
+      menu.removeChild($(".reposWrap"));
     }
     menu.appendChild(reposWrap);
   }
 
-  const repoList = GM_getValue('repoList', []);
+  const repoList = GM_getValue("repoList", []);
   setCheckRepository(repoList);
 
   const prjList = getProjectListToStorage();
