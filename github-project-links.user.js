@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Github repository links
-// @version     1.4
+// @version     1.8
 // @description A userscript that adds a menu that shows a list of selected repository links in org. lawcompany.
 // @author      80xer
 // @namespace   https://github.com/80xer
@@ -16,14 +16,7 @@
 // ==/UserScript==
 
 let utilityFunc = () => {
-  const repoListUrl = () => {
-    let orgName = GM_getValue("orgName", undefined);
-    if (!orgName) {
-      orgName = window.prompt("enter org name");
-      GM_setValue("orgName", orgName);
-    }
-    return `/orgs/${orgName}/repositories`;
-  };
+  const REPO_LIST_URL = "/orgs/lawcompany/repositories";
   const DELETE_HTML = `<span class="tooltipped tooltipped-s" aria-label="Two-factor security not enabled" label="Two-factor security not enabled"><svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x">
   <path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"></path>
 </svg></span>`;
@@ -78,11 +71,10 @@ let utilityFunc = () => {
     function hasClass(el, className) {
       if (!el) return false;
       if (el.classList) return el.classList.contains(className);
-      else {
+      else
         return new RegExp("(^| )" + className + "( |$)", "gi").test(
           el.className
         );
-      }
     }
 
     function addClass(el, className) {
@@ -114,15 +106,16 @@ let utilityFunc = () => {
     }
 
     const parentRepositoryMenu = (text, url) => (menu) => {
-      let parentMenu = document.querySelector(".repoMenu");
-      if (!parentMenu) {
-        parentMenu = document.createElement("div");
-        addClass(parentMenu, "repoMenu");
-        addClass(menu, "repoLink");
-        menu.textContent = text;
-        menu.setAttribute("href", url);
-        parentMenu.appendChild(menu);
-      }
+      const repoMenu = document.querySelector(".repoMenu");
+      console.log("repoMenu:", repoMenu);
+      if (repoMenu) return repoMenu;
+
+      const parentMenu = document.createElement("div");
+      addClass(parentMenu, "repoMenu");
+      addClass(menu, "repoLink");
+      menu.textContent = text;
+      menu.setAttribute("href", url);
+      parentMenu.appendChild(menu);
       return parentMenu;
     };
 
@@ -132,12 +125,12 @@ let utilityFunc = () => {
 
     const repositoryMenu = createMenu(
       beforeMenu,
-      parentRepositoryMenu("Repositories", repoListUrl())
+      parentRepositoryMenu("Repositories", REPO_LIST_URL)
     );
 
     function setCheckRepository(repoList) {
       const { pathname } = window.location;
-      if (pathname !== repoListUrl()) return;
+      if (pathname !== REPO_LIST_URL) return;
       const repos = $$("#org-repositories .org-repos.repo-list ul li");
       if (!repos || repos.length <= 0) return;
       repos.forEach((repo) => {
