@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Github repository links
-// @version     2.0.1
+// @version     2.0.2
 // @description A userscript that adds a menu that shows a list of selected repository links in org. lawcompany.
 // @author      80xer
 // @namespace   https://github.com/80xer
@@ -97,7 +97,10 @@ const getCloneOriginLastMenuInGnb = (lastOriginMenuInGnb) => {
   if (!lastOriginMenuInGnb || lastOriginMenuInGnb.length < 1) {
     throw new Error(`US: not found '${lastOriginMenuInGnb.textContent}' menu`);
   }
-  const cloneOriginLastMenuInGnb = lastOriginMenuInGnb.cloneNode(true);
+  const cloneOriginLastMenuInGnb = document.createElement(
+    lastOriginMenuInGnb.tagName
+  );
+  cloneOriginLastMenuInGnb.classList = lastOriginMenuInGnb.classList;
   return cloneOriginLastMenuInGnb;
 };
 
