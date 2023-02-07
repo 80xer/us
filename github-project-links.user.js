@@ -108,7 +108,7 @@ const createOrgMenu = () => {
 
   addClass(orgMenu, CLASS_ORG_MENU);
   orgMenu.textContent = "Repositories";
-  orgMenu.setAttribute("href", url);
+  // orgMenu.setAttribute("href", url);
   orgWrap.appendChild(orgMenu);
 
   if (lastOriginMenuInGnb.nextSibling) {
