@@ -11,8 +11,8 @@
 // @grant       GM_setValue
 // @grant       GM_log
 // @icon        https://github.githubassets.com/pinned-octocat.svg
-// @updateURL   https://raw.githubusercontent.com/80xer/us/master/github-project-links.user.js
-// @downloadURL https://raw.githubusercontent.com/80xer/us/master/github-project-links.user.js
+// @updateURL   https://github.com/80xer/us/raw/master/github-project-links.user.js
+// @downloadURL https://github.com/80xer/us/raw/master/github-project-links.user.js
 // ==/UserScript==
 
 const CLASS_ORG_MENU_WRAP = "orgMenu";
