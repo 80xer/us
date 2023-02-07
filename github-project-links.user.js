@@ -101,6 +101,8 @@ const getCloneOriginLastMenuInGnb = (lastOriginMenuInGnb) => {
   return cloneOriginLastMenuInGnb;
 };
 
+const getOrgRepositoriesUrl = (orgName) => `/orgs/${orgName}/repositories`;
+
 const createOrgMenu = () => {
   const orgWrap = createOrgMenuWrapInGnb();
   const lastOriginMenuInGnb = getLastOriginMenuInGnb();
@@ -110,6 +112,14 @@ const createOrgMenu = () => {
   orgMenu.textContent = "Repositories";
   // orgMenu.setAttribute("href", url);
   orgWrap.appendChild(orgMenu);
+  orgWrap.addEventListener("click", (e) => {
+    e.preventDefault();
+    let orgName = getOrgName();
+    if (!orgName) {
+      orgName = promptForOrgName();
+    }
+    window.location.url = getOrgRepositoriesUrl(orgName);
+  });
 
   if (lastOriginMenuInGnb.nextSibling) {
     lastOriginMenuInGnb.parentNode.insertBefore(
@@ -133,6 +143,12 @@ const organization = () => {
   orgName = prompt("Enter the organization name");
   if (!orgName) organization();
   setOrgName(orgName);
+  return orgName;
+};
+
+const promptForOrgName = () => {
+  const orgName = prompt("Enter the organization name");
+  if (!orgName) promptForOrgName();
   return orgName;
 };
 
