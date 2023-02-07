@@ -3,6 +3,8 @@
 // @version     2.1.1
 // @description A userscript that adds a menu that shows a list of selected repository links in org. lawcompany.
 // @author      80xer
+// @require      https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.18.2/babel.js
+// @require      https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.16.0/polyfill.js
 // @namespace   https://github.com/80xer
 // @match       https://github.com/*
 // @run-at      document-end
