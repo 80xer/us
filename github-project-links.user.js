@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Github repository links
-// @version     2.0.0
+// @version     2.0.1
 // @description A userscript that adds a menu that shows a list of selected repository links in org. lawcompany.
 // @author      80xer
 // @namespace   https://github.com/80xer
