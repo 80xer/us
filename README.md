@@ -14,4 +14,4 @@
 - install script:
   - [Github project links][gpl-raw]
 
-[gpl-raw]: https://raw.githubusercontent.com/80xer/us/master/github-project-links.user.js
+[gpl-raw]: https://github.com/80xer/us/raw/master/github-project-links.user.js
