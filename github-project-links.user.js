@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Github repository links
-// @version     2.1.5
+// @version     2.2
 // @description A userscript that adds a menu that shows a list of selected repository links in org. lawcompany.
 // @author      80xer
 // @require      https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.18.2/babel.js
@@ -26,6 +26,9 @@ const CLASS_ORG_MENU = "repoLink";
 const CLASS_REPO_LIST_WRAP = "reposWrap";
 const STORE_REPO_LIST = "repoList";
 const STORE_ORG_NAME = "orgName";
+const DELETE_HTML = `<span class="tooltipped tooltipped-s" aria-label="Two-factor security not enabled" label="Two-factor security not enabled"><svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x">
+  <path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"></path>
+</svg></span>`;
 
 const $ = (str, el) => {
   return (el || document).querySelector(str);
@@ -51,7 +54,7 @@ const addClass = (el, className) => {
 const setStyle = () => {
   GM_addStyle(`
     @media (max-width: 1011px) {
-      .orgMenu { height: 38px; width: 100%; }
+      .${CLASS_ORG_MENU_WRAP} { height: 38px; width: 100%; }
       .${CLASS_ORG_MENU_WRAP} .prjsWrap, .${CLASS_ORG_MENU_WRAP} .${CLASS_REPO_LIST_WRAP} { top: -10px; left: 70px; }
       .${CLASS_ORG_MENU_WRAP} ul.prjs:before { left: -7px; top: 12px; border-bottom-color: transparent; border-right-color: rgba(27,31,35,.15); }
       .${CLASS_ORG_MENU_WRAP} ul.prjs:after { left: -5px; top: 13px; border-bottom-color: transparent; border-right-color: #fff;}
@@ -186,9 +189,9 @@ const setCheckRepository = (repoList) => {
     ch.setAttribute("type", "checkbox");
     ch.setAttribute("data-text", anchor.textContent.trim());
     ch.setAttribute("data-url", anchor.getAttribute("href"));
-    const checkedRepo = repoList.filter(
-      (repo) => anchor.textContent.trim() === repo.text
-    );
+    const checkedRepo = repoList
+      ? repoList.filter((repo) => anchor.textContent.trim() === repo.text)
+      : [];
     if (checkedRepo.length > 0) ch.setAttribute("checked", true);
     addClass(ch, "chckRepo");
     ch.addEventListener(
@@ -206,7 +209,7 @@ const setCheckRepository = (repoList) => {
           );
         }
         setRepoList(repoList);
-        createRepositoryList(repositoryMenu, repoList);
+        createRepositoryList(getOrgMenuWrapInGnb(), repoList);
       },
       false
     );
@@ -227,6 +230,8 @@ const createRepositoryList = (menu, repos) => {
   addClass(rps, "Popover-message");
   addClass(rps, "jump-to-suggestions");
   addClass(rps, "jump-to-suggestions-results-container");
+
+  const darkStyle = $(".ghd-style");
   if (darkStyle) addClass(rps, "dark");
 
   repos.sort((a, b) => {
@@ -247,12 +252,12 @@ const createRepositoryList = (menu, repos) => {
     const deleteRepo = (text) => (e) => {
       e.preventDefault();
       let repoList = GM_getValue("repoList", []);
-      GM_log("data-text:", text);
+      console.log("data-text:", text);
       repoList = repoList.filter((r) => {
-        GM_log("r.text:", r.text);
+        console.log("r.text:", r.text);
         return r.text !== text;
       });
-      GM_log(repoList);
+      console.log(repoList);
       GM_setValue("repoList", repoList);
       setCheckRepository(repoList);
       rps.removeChild(rp);
@@ -279,9 +284,6 @@ const createRepositoryList = (menu, repos) => {
 };
 
 let main = () => {
-  const DELETE_HTML = `<span class="tooltipped tooltipped-s" aria-label="Two-factor security not enabled" label="Two-factor security not enabled"><svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x">
-  <path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"></path>
-</svg></span>`;
   var run = () => {
     "use strict";
     const user = $(".Header-item .avatar");
@@ -289,13 +291,13 @@ let main = () => {
       GM_log("not found user avatar");
       return;
     }
-    const darkStyle = $(".ghd-style");
     setStyle();
     createOrgMenu();
     const orgName = getOrgName();
     if (orgName) {
-      setCheckRepository();
-      // createRepositoryList(repositoryMenu, getRepoList);
+      const repoList = GM_getValue("repoList", []);
+      setCheckRepository(repoList);
+      createRepositoryList(getOrgMenuWrapInGnb(), repoList);
     }
   };
 
