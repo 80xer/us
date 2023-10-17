@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Github repository links
-// @version     2.2
+// @version     2.4
 // @description A userscript that adds a menu that shows a list of selected repository links in org.
 // @author      80xer
 // @require      https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.18.2/babel.js
@@ -67,10 +67,10 @@ const setStyle = () => {
       a.${CLASS_ORG_MENU} { z-index: 33; }
     }
 
-    .${CLASS_ORG_MENU_WRAP} { position: relative; }
+    .${CLASS_ORG_MENU_WRAP} { position: relative; margin-left: auto; }
     .${CLASS_ORG_MENU_WRAP}:hover div.prjsWrap, .${CLASS_ORG_MENU_WRAP}:hover div.${CLASS_REPO_LIST_WRAP} { display: block; }
     .${CLASS_ORG_MENU} { display: block; width: 100%; cursor: pointer; }
-    .prjsWrap, .${CLASS_REPO_LIST_WRAP} { position: absolute; width: 280px; z-index: 132; top: 35px; left: -10px; padding: 10px; display: none; }
+    .prjsWrap, .${CLASS_REPO_LIST_WRAP} { position: absolute; width: 280px; z-index: 132; top: 26px; left: -10px; padding: 10px; display: none; }
     .tmpbefore { border-bottom-color: #343434; border: 8px solid transparent; }
     ul.lcul:before { position: absolute; left: 34px; top: -16px; content: ''; display: inline-block; }
     ul.lcul { position:relative; list-style: none; width: auto; }
@@ -80,6 +80,8 @@ const setStyle = () => {
     .jump-to-suggestions-path .pr-5 { padding-right: 0px !important; }
     .navigation-item button { border: none; }
     .navigation-item button:hover { background-color: #f50; }
+    .flex-col { flex-direction: column !important; }
+    .AppHeader-context-full { overflow: visible !important; }
   `);
 };
 
@@ -140,26 +142,38 @@ const promptForOrgName = () => {
 const createOrgMenu = () => {
   const isOrgWrapCreated = getOrgMenuWrapInGnb();
   if (isOrgWrapCreated) return;
-  const orgWrap = createOrgMenuWrapInGnb();
+  const orgWrap = document.querySelector('.AppHeader-context > .AppHeader-context-full nav ul');
   const lastOriginMenuInGnb = getLastOriginMenuInGnb();
-  const orgMenu = getCloneOriginLastMenuInGnb(lastOriginMenuInGnb);
 
+  const orgMenu = cloneMenuDesktop()
+  //const anchor = orgMenu.querySelector('a.AppHeader-context-item');
+  //anchor.setAttribute('href',"javascript:void(0);");
+
+  addClass(orgMenu, CLASS_ORG_MENU_WRAP);
   addClass(orgMenu, CLASS_ORG_MENU);
-  orgMenu.textContent = getOrgName() ? `${getOrgName()} Repos` : "Repositories";
+  orgMenu.querySelector('.AppHeader-context-item-label').textContent = getOrgName() ? `${getOrgName()} Repos` : "Repositories";
+
   orgWrap.appendChild(orgMenu);
 
   orgMenu.addEventListener("click", (e) => {
-    e.preventDefault();
-    let orgName = getOrgName();
-    if (!orgName || orgName.length < 1) {
-      orgName = promptForOrgName();
-    }
+      const item = event.target.closet('.jump-to-suggestions-path')
+      console.log('item:', item);
 
-    setOrgName(orgName);
-    const url = getOrgRepositoriesUrl(orgName);
-    window.location.href = url;
+    if(!e.target.classList.contains("jump-to-suggestions-path")) {
+        e.preventDefault();
+        let orgName = getOrgName();
+        if (!orgName || orgName.length < 1) {
+            orgName = promptForOrgName();
+        }
+
+        setOrgName(orgName);
+        const url = getOrgRepositoriesUrl(orgName);
+        //window.location.href = url;
+    }
   });
 
+
+  /*
   if (lastOriginMenuInGnb.nextSibling) {
     lastOriginMenuInGnb.parentNode.insertBefore(
       orgWrap,
@@ -168,8 +182,15 @@ const createOrgMenu = () => {
   } else {
     lastOriginMenuInGnb.parentNode.appendChild(orgWrap);
   }
+  */
   return orgWrap;
 };
+
+const cloneMenuDesktop = () => {
+    const dashboardMenuDeskTop = document.querySelector('.AppHeader-context > .AppHeader-context-full nav ul li')
+    const newMenuDesktop = dashboardMenuDeskTop.cloneNode(true);
+    return newMenuDesktop;
+}
 
 const setCheckRepository = (repoList) => {
   const { href } = window.location;
@@ -230,6 +251,7 @@ const createRepositoryList = (menu, repos) => {
   addClass(rps, "Popover-message");
   addClass(rps, "jump-to-suggestions");
   addClass(rps, "jump-to-suggestions-results-container");
+  addClass(rps, "flex-col");
 
   const darkStyle = $(".ghd-style");
   if (darkStyle) addClass(rps, "dark");
@@ -257,7 +279,6 @@ const createRepositoryList = (menu, repos) => {
         console.log("r.text:", r.text);
         return r.text !== text;
       });
-      console.log(repoList);
       GM_setValue("repoList", repoList);
       setCheckRepository(repoList);
       rps.removeChild(rp);
@@ -286,7 +307,7 @@ const createRepositoryList = (menu, repos) => {
 let main = () => {
   var run = () => {
     "use strict";
-    const user = $(".Header-item .avatar");
+    const user = $(".AppHeader-user .avatar");
     if (!user) {
       GM_log("not found user avatar");
       return;
