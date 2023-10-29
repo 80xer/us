@@ -8,6 +8,7 @@
 // @namespace   https://github.com/80xer
 // @match       https://github.com/*
 // @run-at      document-end
+// @grant       GM_log
 // @grant       GM_addStyle
 // @grant       GM_setValue
 // @grant       GM_getValue
@@ -142,36 +143,38 @@ const promptForOrgName = () => {
 const createOrgMenu = () => {
   const isOrgWrapCreated = getOrgMenuWrapInGnb();
   if (isOrgWrapCreated) return;
-  const orgWrap = document.querySelector('.AppHeader-context > .AppHeader-context-full nav ul');
+  const orgWrap = document.querySelector(
+    ".AppHeader-context > .AppHeader-context-full nav ul"
+  );
   const lastOriginMenuInGnb = getLastOriginMenuInGnb();
 
-  const orgMenu = cloneMenuDesktop()
+  const orgMenu = cloneMenuDesktop();
   //const anchor = orgMenu.querySelector('a.AppHeader-context-item');
   //anchor.setAttribute('href',"javascript:void(0);");
 
   addClass(orgMenu, CLASS_ORG_MENU_WRAP);
   addClass(orgMenu, CLASS_ORG_MENU);
-  orgMenu.querySelector('.AppHeader-context-item-label').textContent = getOrgName() ? `${getOrgName()} Repos` : "Repositories";
+  orgMenu.querySelector(".AppHeader-context-item-label").textContent =
+    getOrgName() ? `${getOrgName()} Repos` : "Repositories";
 
   orgWrap.appendChild(orgMenu);
 
   orgMenu.addEventListener("click", (e) => {
-      const item = event.target.closet('.jump-to-suggestions-path')
-      console.log('item:', item);
+    const item = event.target.closet(".jump-to-suggestions-path");
+    console.log("item:", item);
 
-    if(!e.target.classList.contains("jump-to-suggestions-path")) {
-        e.preventDefault();
-        let orgName = getOrgName();
-        if (!orgName || orgName.length < 1) {
-            orgName = promptForOrgName();
-        }
+    if (!e.target.classList.contains("jump-to-suggestions-path")) {
+      e.preventDefault();
+      let orgName = getOrgName();
+      if (!orgName || orgName.length < 1) {
+        orgName = promptForOrgName();
+      }
 
-        setOrgName(orgName);
-        const url = getOrgRepositoriesUrl(orgName);
-        //window.location.href = url;
+      setOrgName(orgName);
+      const url = getOrgRepositoriesUrl(orgName);
+      //window.location.href = url;
     }
   });
-
 
   /*
   if (lastOriginMenuInGnb.nextSibling) {
@@ -187,10 +190,12 @@ const createOrgMenu = () => {
 };
 
 const cloneMenuDesktop = () => {
-    const dashboardMenuDeskTop = document.querySelector('.AppHeader-context > .AppHeader-context-full nav ul li')
-    const newMenuDesktop = dashboardMenuDeskTop.cloneNode(true);
-    return newMenuDesktop;
-}
+  const dashboardMenuDeskTop = document.querySelector(
+    ".AppHeader-context > .AppHeader-context-full nav ul li"
+  );
+  const newMenuDesktop = dashboardMenuDeskTop.cloneNode(true);
+  return newMenuDesktop;
+};
 
 const setCheckRepository = (repoList) => {
   const { href } = window.location;
