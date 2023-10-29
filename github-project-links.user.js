@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Github repository links
-// @version     2.4
+// @version     2.5
 // @description A userscript that adds a menu that shows a list of selected repository links in org.
 // @author      80xer
 // @require      https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.18.2/babel.js
